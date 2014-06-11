@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper  
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pac.king.dao.MainDao">
+	<resultMap type="pac.king.pojo.User" id="U">
+		<result property="id" column="ID" />
+		<result property="name" column="NAME" />
+	</resultMap>
+	<resultMap type="pac.king.pojo.Menu" id="Menu">
+		<result property="id" column="ID" />
+		<result property="fid" column="FID" />
+		<result property="name" column="NAME" />
+		<result property="url" column="URL" />
+		<result property="num" column="NUM" />
+	</resultMap>
+</mapper>

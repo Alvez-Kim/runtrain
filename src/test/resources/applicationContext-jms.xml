@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util" 
+	xmlns:p="http://www.springframework.org/schema/p" 
+	xmlns:amq="http://activemq.apache.org/schema/core"
+	xmlns:jms="http://www.springframework.org/schema/jms"
+	
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd
+		http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd
+		http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms.xsd
+		" 
+		default-autowire="byName">
+		
+<!-- 		http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd -->
+  
+<!--   	<property name="blockIfSessionPoolIsFull" value="true"/> -->
+ 
+   <!-- a pooling based JMS provider -->
+<!--   <bean id="jmsFactory" class="org.apache.activemq.pool.PooledConnectionFactory" />	 -->
+
+
+        
+<!--         <property name="pubSubDomain" value="true" />   -->
+    
+<!--      <bean id="listenerContainer"   -->
+<!--         class="org.springframework.jms.listener.DefaultMessageListenerContainer">   -->
+<!--         <property name="concurrentConsumers" value="10" />   -->
+<!--         <property name="connectionFactory" ref="jmsFactory" />   -->
+<!--         <property name="destinationName" value="subject" />   -->
+<!--         <property name="messageListener" ref="messageReceiver" />   -->
+<!--         <property name="pubSubNoLocal" value="false"></property>   -->
+<!--     </bean>   -->
+
+
+	
+	<!--
+	extends AbstractMessageListenerContainer
+	<bean class="org.springframework.jms.listener.SimpleMessageListenerContainer">  
+        <property name="connectionFactory" ref="connectionFactory" />  
+        <property name="destination" ref="myQueue" />  
+        <property name="concurrentConsumers" value="3" />  
+        <property name="messageListener" ref="myAccountService" />  
+        <property name="taskExecutor" ref="threadPool" />  
+    </bean>  
+	-->
+	<context:component-scan base-package="pac.testcase"  />
+	 <!-- Spring JMS Template -->  
+<!-- 	<bean id="jmsFactory" class="org.apache.activemq.pool.PooledConnectionFactory" /> -->
+	<amq:connectionFactory id="jmsFactory" />
+	<!--  -->
+    <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate" p:connectionFactory-ref="jmsFactory">
+        <property name="defaultDestination" >
+        	<amq:queue physicalName="sparta" />
+        </property>
+    </bean>
+
+<!--     AbstractMessageListenerContainer -->
+<!--     	<jms:listener  destination="sparta" ref="myListener" method="processHandle" /> -->
+	
+<!--     <bean id="myListener" class="pac.testcase.jms.CustomedListener"/> -->
+    <jms:listener-container 
+    	destination-type="queue"
+    	connection-factory="jmsFactory"
+    	concurrency="3"
+    	container-type="simple"
+    	task-executor="threadPool">
+    	<jms:listener  destination="sparta" ref="serverService"  />
+	</jms:listener-container>
+	
+<!-- 	<bean id="JmsRmiService" class="pac.testcase.jms.JmsRmiServiceImpl"></bean> -->
+	<bean id="serverService" class="org.springframework.jms.remoting.JmsInvokerServiceExporter"
+		p:serviceInterface="pac.testcase.jms.JmsRmiService"
+		p:service-ref="jmsRmiServiceImpl">
+	</bean>
+	  
+	<bean id="threadPool" class="org.springframework.core.task.SimpleAsyncTaskExecutor">  
+        <property name="daemon" value="true" />  
+        <property name="concurrencyLimit" value="300" />  
+        <property name="threadNamePrefix" value="SERVICE" />  
+    </bean>
+	
+</beans>

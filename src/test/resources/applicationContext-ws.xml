@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util" 
+	xmlns:p="http://www.springframework.org/schema/p" 
+	xmlns:amq="http://activemq.apache.org/schema/core"
+	xmlns:jms="http://www.springframework.org/schema/jms"
+	xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xmlns:cxf="http://cxf.apache.org/core"
+	
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd
+		http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd
+		http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms.xsd
+		http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
+		http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
+		http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
+		"
+		default-autowire="byName">
+		
+	<bean id="myService" class="pac.testcase.ws.impl.MyServiceImpl" />
+	<bean class="org.springframework.remoting.rmi.RmiServiceExporter"
+		p:service-ref="myService"
+		p:serviceName="welcomeService"
+		p:serviceInterface="pac.testcase.ws.MyService"
+	/>
+	
+	<import resource="classpath:META-INF/cxf/cxf.xml" />  
+    <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />  
+    <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />  
+    
+    <jaxws:client id="MyCxfClient" address="http://localhost:8080/runtrain/services/MyCxfService" 
+		serviceClass="pac.testcase.ws.client.MyCxfService" />
+		
+	<bean id="myInterceptor" class="pac.testcase.ws.client.MyInterceptor" >
+		<constructor-arg name="phase" value="user-protocol" />
+	</bean>
+	
+	<bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor"/>
+    <bean id="logOutbound" class="org.apache.cxf.interceptor.LoggingOutInterceptor"/>
+	<cxf:bus>
+		<cxf:inInterceptors>
+			<ref bean="logInbound"/>
+			<ref bean="myInterceptor"/>
+		</cxf:inInterceptors>
+		<cxf:outInterceptors>
+			<ref bean="logOutbound"/>
+<!-- 			<ref bean="myInterceptor"/> -->
+		</cxf:outInterceptors>
+	</cxf:bus> 
+	   
+		
+</beans>

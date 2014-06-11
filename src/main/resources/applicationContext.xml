@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:p="http://www.springframework.org/schema/p"
+	
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+	">
+<!-- 
+	<context:property-placeholder
+		ignore-unresolvable="true" local-override="true"
+		location="classpath*:/application.properties,classpath*:/application.local.properties" />
+ -->
+<!-- 	<util:properties id="APP_PROPERTIES" location="classpath:application.properties" local-override="true" /> -->
+
+	<context:component-scan base-package="pac.king" use-default-filters="true" />
+	<!--
+	<bean id="myHessianServiceImpl" class="pac.king.common.rpc.impl.MyHessianServiceImpl" />
+	 <bean id="myHessianService" class="org.springframework.remoting.caucho.HessianServiceExporter"
+		p:service-ref="myHessianServiceImpl"
+		p:serviceInterface="pac.king.common.rpc.MyHessianService"
+	/> -->
+	<!-- <bean id="myHessianService" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter"
+		p:service-ref="myHessianServiceImpl"
+		p:serviceInterface="pac.king.common.rpc.MyHessianService"
+	/> -->
+	
+	<!-- <bean id="myHttpInvokerServiceImpl" class="pac.king.common.rpc.impl.MyHttpInvokerServiceImpl" />
+	<bean id="myHessianService" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter"
+		p:service-ref="myHttpInvokerServiceImpl"
+		p:serviceInterface="pac.king.common.rpc.MyHttpInvokerService"
+	/> -->
+	<!-- 
+	<bean class="org.springframework.remoting.jaxws.SimpleJaxWsServiceExporter" />
+	
+	<bean id="clientSide" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean"
+		p:wsdlDocumentUrl="http://localhost:8080/testMyService?wsdl"
+		p:serviceName="testMyService"
+		p:portName="MyServiceEndpointPort"
+		p:serviceInterface="pac.king.endpoint.MyClientService"
+		p:namespaceUri="http://endpoint.king.pac/"
+	/>
+ -->		
+		
+</beans>

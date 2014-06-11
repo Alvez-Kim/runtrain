@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache updateCheck="false" dynamicConfig="true"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd">
+	<!-- name：Cache的唯一标识 maxElementsInMemory：cache 中最多可以存放的元素的数量。如果放入cache中的元素超过这个数值，有两种情况：1. 
+		若overflowToDisk的属性值为true，会将cache中多出的元素放入磁盘文件中。2. 若overflowToDisk的属性值为false，会根据memoryStoreEvictionPolicy的策略替换cache中原有的元素。 
+		maxElementsOnDisk：磁盘中最大缓存对象数，若是0表示无穷大 eternal：是否永驻内存。如果值是true，cache中的元素将一直保存在内存中，不会因为时间超时而丢失，所以在这个值为true的时候，timeToIdleSeconds和timeToLiveSeconds两个属性的值就不起作用了。 
+		overflowToDisk：溢出是否写入磁盘。系统会根据标签<diskStore path="java.io.tmpdir"/> 中path的值查找对应的属性值，如果系统的java.io.tmpdir的值是 
+		D:\temp，写入磁盘的文件就会放在这个文件夹下。文件的名称是cache的名称，后缀名的data。如：CACHE_FUNC.data。 timeToIdleSeconds：访问这个cache中元素的最大间隔时间。如果超过这个时间没有访问这个cache中的某个元素，那么这个元素将被从cache中清除。 
+		timeToLiveSeconds：cache中元素的生存时间。意思是从cache中的某个元素从创建到消亡的时间，从创建开始计时，当超过这个时间，这个元素将被从cache中清除。 
+		diskPersistent：是否持久化磁盘缓存。当这个属性的值为true时，系统在初始化的时候会在磁盘中查找文件名为cache名称 diskExpiryThreadIntervalSeconds：磁盘缓存的清理线程运行间隔 
+		diskSpoolBufferSizeMB：这个参数设置DiskStore（磁盘缓存）的缓存区大小。默认是30MB。每个Cache都应该有自己的一个缓冲区 
+		memoryStoreEvictionPolicy：当达到maxElementsInMemory限制时，Ehcache将会根据指定的策略去清理内存。默认策略是LRU（最近最少使用）。你可以设置为FIFO（先进先出）或是LFU（较少使用） 
+		备注: 持久化到硬盘的路径由虚拟机参数"java.io.tmpdir"决定. System.out.println(System.getProperty("java.io.tmpdir")); -->
+
+	<!-- 缓存位置 -->
+	<diskStore path="java.io.tmpdir/ehcache" />
+
+	<!-- 集群配置 -->
+	<!-- <cacheManagerPeerProviderFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheManagerPeerProviderFactory" 
+		properties="connect=UDP(mcast_addr=******;mcast_port=45566;ip_ttl=32;mcast_send_buf_size=150000;mcast_recv_buf_size=80000): -->
+	<cacheManagerPeerProviderFactory
+		class="net.sf.ehcache.distribution.jgroups.JGroupsCacheManagerPeerProviderFactory"
+		properties="connect=UDP(mcast_addr=localhost;mcast_port=45568;ip_ttl=32;mcast_send_buf_size=150000;mcast_recv_buf_size=80000):
+	    PING(timeout=2000;num_initial_members=6):
+	    MERGE2(min_interval=5000;max_interval=10000):
+	    FD_SOCK:VERIFY_SUSPECT(timeout=1500):
+	    pbcast.NAKACK(retransmit_timeout=3000):
+	    UNICAST:
+	    pbcast.STABLE(desired_avg_gossip=20000):
+	    FRAG:
+	    pbcast.GMS(join_timeout=5000;print_local_addr=true)"
+		propertySeparator="::" />
+
+	<defaultCache maxElementsInMemory="1000000" eternal="false"
+		overflowToDisk="false" diskPersistent="false" timeToIdleSeconds="200"
+		timeToLiveSeconds="300" maxElementsOnDisk="10000000"
+		diskExpiryThreadIntervalSeconds="120" memoryStoreEvictionPolicy="LRU">
+		
+		<cacheEventListenerFactory
+			class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+			properties="replicateAsynchronously=true, replicatePuts=true, replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" />
+	</defaultCache>
+
+	<!-- <cache name="OrderService" maxElementsInMemory="10000" eternal="false" 
+		overflowToDisk="false" timeToIdleSeconds="0" timeToLiveSeconds="0" maxElementsOnDisk="10000000" 
+		diskExpiryThreadIntervalSeconds="120" memoryStoreEvictionPolicy="LRU" /> -->
+
+	<!-- <cache name="shiroAuthorizationCache" maxElementsInMemory="300" eternal="false" 
+		timeToLiveSeconds="600" overflowToDisk="false"/> -->
+
+	<!-- 产品类别\类型 -->
+	<!-- <cache name="cn.com.chinatelecom.ecsom.dao.ProductDTypeMapper" maxElementsInMemory="100" 
+		eternal="false" overflowToDisk="false" timeToIdleSeconds="0" timeToLiveSeconds="30" 
+		maxElementsOnDisk="100" diskExpiryThreadIntervalSeconds="120" memoryStoreEvictionPolicy="LRU" 
+		/> <cache name="cn.com.chinatelecom.ecsom.dao.ProductTypeMapper" maxElementsInMemory="100" 
+		eternal="false" overflowToDisk="false" timeToIdleSeconds="0" timeToLiveSeconds="30" 
+		maxElementsOnDisk="100" diskExpiryThreadIntervalSeconds="120" memoryStoreEvictionPolicy="LRU" 
+		/> -->
+</ehcache>

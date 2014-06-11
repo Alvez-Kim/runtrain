@@ -1,0 +1,9 @@
+Inbound Message
+----------------------------
+ID: 1
+Response-Code: 200
+Encoding: UTF-8
+Content-Type: text/xml; charset=utf-8
+Headers: {Content-Length=[918], content-type=[text/xml; charset=utf-8], Server=[Jetty(6.1.26)]}
+Payload: <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><ns2:convertUserInfoToMapResponse xmlns:ns2="http://webservice.king.pac/"><return><item xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/><item><key>id</key><value>100001</value></item><item><key>name</key><value>King.</value></item><item><key>password</key><value>t;stmdtkg</value></item><item xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/><item xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/><item xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/><item xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/><item xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/><item xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/></return></ns2:convertUserInfoToMapResponse></soap:Body></soap:Envelope>
+--------------------------------------
