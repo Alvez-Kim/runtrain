@@ -30,9 +30,9 @@ public class TestIntegerCache {
 			result = String.format("%d", new Integer(2)+new Integer(2));
 			System.out.println(result);
 			
-			Integer o1 = new Integer(128);
-			Integer o2 = new Integer(12);
-			System.out.printf("%b",o1==128);
+			Integer o1 = 127;
+			Integer o2 = 127;
+			System.out.printf("%d",o1-o2);
 		} catch (NoSuchFieldException | SecurityException e) {
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
