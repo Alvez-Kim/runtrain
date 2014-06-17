@@ -2,7 +2,7 @@ package pac.testcase.ds;
 
 public class Permutation {
 	public static void main(String[] args) {
-		char[] in = "12".toCharArray();
+		char[] in = "123".toCharArray();
 		permute(in, 0);
 	}
 
