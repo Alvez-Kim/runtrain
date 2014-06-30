@@ -286,6 +286,18 @@
 			<artifactId>lucene-analyzers-smartcn</artifactId>
 			<version>${lucene.version}</version>
 		</dependency>
+		
+		<!-- quartz scheduler -->
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz</artifactId>
+			<version>2.2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz-jobs</artifactId>
+			<version>2.2.1</version>
+		</dependency>
 
 		<!-- jms activemq -->
 		<dependency>
@@ -465,6 +477,16 @@
 			<groupId>com.itextpdf.tool</groupId>
 			<artifactId>xmlworker</artifactId>
 			<version>5.5.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.belerweb</groupId>
+			<artifactId>pinyin4j</artifactId>
+			<version>2.5.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-compress</artifactId>
+			<version>1.8.1</version>
 		</dependency>
 	</dependencies>
 	<build>
