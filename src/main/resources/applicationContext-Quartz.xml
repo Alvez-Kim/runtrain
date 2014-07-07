@@ -12,13 +12,14 @@
 
 	<bean name="quartzScheduler" lazy-init="false"
 		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-		<!-- <property name="dataSource" ref="_mainDataSource" /> -->
-		<property name="triggers">
-			<list>
-				<ref bean="simpleTrigger" />
-				<ref bean="methodInvokingTrigger" />
-			</list>
-		</property>
+		<property name="applicationContextSchedulerContextKey" value="applicationContextKey" />
+		<property name="dataSource" ref="_mainDataSource" />
+<!-- 		<property name="triggers"> -->
+<!-- 			<list> -->
+<!-- 				<ref bean="simpleTrigger" /> -->
+<!-- 				<ref bean="methodInvokingTrigger" /> -->
+<!-- 			</list> -->
+<!-- 		</property> -->
 	</bean>
 
 	<bean id="printJob"
