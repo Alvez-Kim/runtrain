@@ -10,10 +10,20 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class TestRabbitRpc {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
+
+        RPCClient fibonacciRpc = new RPCClient();
+
+        System.out.println(" [x] Requesting fib(30)");
+        String response = fibonacciRpc.call("30");
+        System.out.println(" [.] Got '" + response + "'");
+
+        fibonacciRpc.close();
 
     }
 }
+
+
 
 class RPCServer{
     private static final String RPC_QUEUE_NAME = "rpc_queue";
@@ -98,6 +108,7 @@ class RPCClient{
             QueueingConsumer.Delivery delivery = consumer.nextDelivery();
             if (delivery.getProperties().getCorrelationId().equals(corrId)) {
                 response = new String(delivery.getBody());
+                System.out.println(response);
                 break;
             }
         }
