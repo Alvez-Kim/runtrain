@@ -19,7 +19,7 @@
 	
 		<context:property-placeholder
 		ignore-unresolvable="true" local-override="true"
-		location="classpath*:/application.properties,classpath*:/application.local.properties" />
+		location="classpath*:/application.properties,classpath*:/application.properties" />
 
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="mainDataSource" />
