@@ -47,11 +47,11 @@
 <!-- 			</bean> -->
 <!-- 		</mvc:interceptor> -->
 <!-- 	</mvc:interceptors> -->
-	<mvc:annotation-driven>
-		<mvc:message-converters>
-			<bean class="pac.king.common.MessageConverter" />
-		</mvc:message-converters>
-	</mvc:annotation-driven>
+	<!--<mvc:annotation-driven>-->
+		<!--<mvc:message-converters>-->
+			<!--<bean class="pac.king.common.MessageConverter" />-->
+		<!--</mvc:message-converters>-->
+	<!--</mvc:annotation-driven>-->
 	<mvc:default-servlet-handler />
 	
 	
