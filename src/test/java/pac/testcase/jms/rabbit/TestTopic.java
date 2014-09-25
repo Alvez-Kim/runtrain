@@ -32,14 +32,8 @@ final class ChannelFactory_{
     static {
         Channel temp = getChannel();
         try {
-            temp.exchangeDelete("llll");
-            temp.exchangeDelete("log2");
-            temp.exchangeDelete("log");
-            temp.exchangeDelete("logs");
-            temp.exchangeDelete("direct_exchange");
-            temp.exchangeDelete("exchange0");
-            temp.exchangeDelete("exchange1");
             temp.exchangeDeclare(EXCHANGE_NAME, ExchangeTypes.TOPIC);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
