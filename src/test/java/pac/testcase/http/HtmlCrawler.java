@@ -17,6 +17,7 @@ import javax.xml.xpath.XPathFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,7 +26,12 @@ import java.util.regex.Pattern;
 public class HtmlCrawler {
 
     public static void main(String[] args) throws ParserConfigurationException, SAXException, XPathExpressionException, IOException {
-        crawlByXPath();
+        Iterator<String> iterator = crawlByRegex().iterator();
+        int i=0;
+        while(iterator.hasNext())
+            System.out.println((String.valueOf(++i)).concat(". ").concat(iterator.next()));
+
+        crawlByXPath(); // causes org.xml.sax.SAXParseException
     }
 
     static List<String> crawlByRegex() throws IOException {
