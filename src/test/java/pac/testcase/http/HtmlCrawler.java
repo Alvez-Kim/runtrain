@@ -4,6 +4,10 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
+import org.jsoup.select.Elements;
+import org.junit.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -19,6 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,8 +32,8 @@ public class HtmlCrawler {
 
     public static void main(String[] args) throws ParserConfigurationException, SAXException, XPathExpressionException, IOException {
         Iterator<String> iterator = crawlByRegex().iterator();
-        int i=0;
-        while(iterator.hasNext())
+        int i = 0;
+        while (iterator.hasNext())
             System.out.println((String.valueOf(++i)).concat(". ").concat(iterator.next()));
 
         crawlByXPath(); // causes org.xml.sax.SAXParseException
@@ -41,6 +46,8 @@ public class HtmlCrawler {
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         response.getEntity().writeTo(byteArrayOutputStream);
+
+
         String result = byteArrayOutputStream.toString();
 
         String regex = "<a\\s*href=\"javascript:;\"\\s*class=\"art-title\">(.*)</a>";
@@ -67,6 +74,49 @@ public class HtmlCrawler {
         //<div class="post-text" itemprop="text"><p>When you commit, tick the <code>Optimize imports</code> option on the right.  This will become the default until you change it.</p><p>I prefer using the <code>Reformat code</code> option as well.</p></div>
         XPathExpression expression = xPath.compile("//div[class=post-text]/text()");
 
+    }
+
+    @Test
+    public void crawlByJsoup() throws IOException {
+
+        final String baseURL = "http://xianguo.com";
+
+        Connection connection = Jsoup.connect(baseURL.concat("/lianbo/contents"));
+        Connection.Response response = connection.execute();
+        String html = response.body();
+        org.jsoup.nodes.Document document = Jsoup.parse(html);
+        Elements elements = document.getElementsByAttributeValueContaining("class", "a cate-list");
+
+        Iterator<org.jsoup.nodes.Element> iterator = elements.iterator();
+
+        ExecutorService service = Executors.newFixedThreadPool(10);
+        List<Future<Integer>> futures = new ArrayList<>();
+        int index = 0;
+        while (iterator.hasNext()) {
+            final org.jsoup.nodes.Element element = iterator.next();
+            System.out.println(String.valueOf(++index).concat(". ").concat(element.text()));
+
+            futures.add(
+                    service.submit(new Callable<Integer>() {
+                        @Override
+                        public Integer call() throws Exception {
+                            return Jsoup.parse(Jsoup.connect(baseURL.concat(element.attr("href"))).execute().body()).getElementsByAttributeValueContaining("class", "sub-info").size();
+                        }
+                    }));
+
+
+        }
+
+        Iterator<Future<Integer>> futureIterator = futures.iterator();
+        int sectionCount = 0;
+        while(futureIterator.hasNext()){
+            try {
+                sectionCount += futureIterator.next().get();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println(sectionCount);
     }
 
 }
