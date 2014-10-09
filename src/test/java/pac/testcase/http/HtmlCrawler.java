@@ -30,16 +30,8 @@ import java.util.regex.Pattern;
 
 public class HtmlCrawler {
 
-    public static void main(String[] args) throws ParserConfigurationException, SAXException, XPathExpressionException, IOException {
-        Iterator<String> iterator = crawlByRegex().iterator();
-        int i = 0;
-        while (iterator.hasNext())
-            System.out.println((String.valueOf(++i)).concat(". ").concat(iterator.next()));
-
-        crawlByXPath(); // causes org.xml.sax.SAXParseException
-    }
-
-    static List<String> crawlByRegex() throws IOException {
+    @Test
+    public void crawlByRegex() throws IOException {
         HttpClient client = new DefaultHttpClient();
         HttpPost post = new HttpPost("http://xianguo.com/section/EF2BBCB8E868A5E8951BBD4CF2AFE867");
         HttpResponse response = client.execute(post);
@@ -60,9 +52,21 @@ public class HtmlCrawler {
             titles.add(matcher.group(1));
         }
 
-        return titles;
+        Iterator<String> iterator = titles.iterator();
+        int i = 0;
+        while (iterator.hasNext())
+            System.out.println((String.valueOf(++i)).concat(". ").concat(iterator.next()));
+
     }
 
+    /**
+     * causes org.xml.sax.SAXParseException
+     *
+     * @throws ParserConfigurationException
+     * @throws IOException
+     * @throws SAXException
+     * @throws XPathExpressionException
+     */
     static void crawlByXPath() throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
@@ -104,12 +108,11 @@ public class HtmlCrawler {
                         }
                     }));
 
-
         }
 
         Iterator<Future<Integer>> futureIterator = futures.iterator();
         int sectionCount = 0;
-        while(futureIterator.hasNext()){
+        while (futureIterator.hasNext()) {
             try {
                 sectionCount += futureIterator.next().get();
             } catch (InterruptedException | ExecutionException e) {
