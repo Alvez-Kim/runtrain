@@ -1,5 +1,10 @@
 package pac.testcase.http;
 
+import org.apache.commons.httpclient.HostConfiguration;
+import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.params.HostParams;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -121,5 +126,23 @@ public class HtmlCrawler {
         }
         System.out.println(sectionCount);
     }
+
+    @Test
+    public void crawlByHttpClientOfCommons(){
+        org.apache.commons.httpclient.HttpClient client = new org.apache.commons.httpclient.HttpClient();
+        HostConfiguration configuration = new HostConfiguration();
+
+        PostMethod postMethod = new PostMethod();
+        postMethod.setPath("http://xianguo.com/section/EF2BBCB8E868A5E8951BBD4CF2AFE867");
+
+        try {
+            System.out.println(client.executeMethod(configuration, postMethod));
+            System.out.println(new String(postMethod.getResponseBody()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 
 }
