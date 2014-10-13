@@ -20,8 +20,8 @@ public class DownloadChannelClient extends Thread{
 	
 	public static void main(String[] args){
 		new DownloadChannelClient(0).start();
-		new DownloadChannelClient(1).start();
-		new DownloadChannelClient(2).start();
+//		new DownloadChannelClient(1).start();
+//		new DownloadChannelClient(2).start();
 	}
 	
 	private FileOutputStream fos;
@@ -30,7 +30,7 @@ public class DownloadChannelClient extends Thread{
 	public DownloadChannelClient(int i) {
 		super();
 		try {
-			this.fos = new FileOutputStream("E:/testfolder/channelTest"+i+".rar");
+			this.fos = new FileOutputStream("E:/channelTest"+i+".rar");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -61,22 +61,20 @@ public class DownloadChannelClient extends Thread{
 					SelectionKey key = selKeyItr.next();
 					selKeyItr.remove();
 					if (key.isConnectable()) {
-						System.out.println("client connectble");
 						SocketChannel channel = (SocketChannel) key.channel();
-
-						channel.configureBlocking(false);
+                        System.out.println("client connectble::"+channel.toString());
+                        channel.configureBlocking(false);
 						channel.finishConnect();
 						channel.write(encoder.encode(CharBuffer.wrap("start download")));
 						channel.register(sel, SelectionKey.OP_READ);
 					} else if (key.isReadable()) {
 						SocketChannel channel = (SocketChannel) key.channel();
-						if(channel.read(buffer)>0){
-							buffer.flip();
-							fc.write(buffer);
-							buffer.clear();
-						}else{
-							channel.close();
-						}
+                        System.out.println("client read "+ channel.toString());
+                        ByteBuffer tmpBuffer = ByteBuffer.allocate(1024*100);
+                        channel.read(tmpBuffer);
+                        tmpBuffer.flip();
+                        fc.write(tmpBuffer );
+                        tmpBuffer .clear();
 					}
 				}
 			}

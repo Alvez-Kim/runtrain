@@ -1,15 +1,18 @@
 package pac.testcase.basic.nio;
 
+import javax.net.ServerSocketFactory;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.ServerSocket;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.channels.*;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.util.Iterator;
+import java.util.Set;
 
 
 public class DownloadChannelServer extends Thread{
@@ -20,47 +23,53 @@ public class DownloadChannelServer extends Thread{
 		
 		ServerSocketChannel serverChannel;
 		try {
+
 			serverChannel = ServerSocketChannel.open();
 			serverChannel.bind(new InetSocketAddress(8989));
 			serverChannel.configureBlocking(false);
 			Selector sel = Selector.open();
-			serverChannel.register(sel, SelectionKey.OP_ACCEPT);
+            System.out.println("server socket channel::"+serverChannel);
+            serverChannel.register(sel, SelectionKey.OP_ACCEPT);
 			ByteBuffer buffer = ByteBuffer.allocate(100*1024);
 			
 			CharsetDecoder decoder = Charset.forName("UTF-8").newDecoder();
 			
 			while(true){
 				sel.select();
-				Iterator<SelectionKey> selKeyItr = sel.selectedKeys().iterator();
-				while(selKeyItr.hasNext()){
+                Set<SelectionKey> keySet; keySet = sel.selectedKeys();
+                System.out.println("key count::"+keySet.size());
+                Iterator<SelectionKey> selKeyItr = keySet.iterator();
+                System.out.println("has next"+selKeyItr.hasNext());
+                while(selKeyItr.hasNext()){
 					SelectionKey key = selKeyItr.next();
 					selKeyItr.remove();
 					
 					if(key.isAcceptable()){
 						System.out.println("server acceptable");
 						SocketChannel channel = ((ServerSocketChannel)key.channel()).accept();
-						channel.configureBlocking(false);
+                        System.out.println("server accept::"+channel.toString());
+                        channel.configureBlocking(false);
 						channel.register(sel, SelectionKey.OP_READ);
 					}else if(key.isReadable()){
-						System.out.println("server readable"+Thread.currentThread().getName());
 						SocketChannel channel = (SocketChannel) key.channel();
-						if(channel.read(buffer)>0){
+                        System.out.println("server read::"+channel.toString());
+                        if(channel.read(buffer)>0){
 							buffer.flip();
 							CharBuffer clientBuffer = decoder.decode(buffer);
 							System.out.println("from client::"+clientBuffer.toString());
-							buffer.clear();	
+							buffer.clear();
 						}
-						
-						channel.register(sel, SelectionKey.OP_WRITE).attach(new ChannelResolver("D:/doc_backup.rar"));
+
+						channel.register(sel, SelectionKey.OP_WRITE).attach(new ChannelResolver("E:/temptest.rar"));
 					}else if(key.isWritable()){
 						SocketChannel channel =(SocketChannel) key.channel();
-						
-						if(key.attachment()!=null){
+                        System.out.println("server write::"+channel.toString());
+                        if(key.attachment()!=null){
 							ChannelResolver resolver = (ChannelResolver)key.attachment();
-							buffer = resolver.readInto(); 
-							if(buffer!=null){
-								channel.write(buffer);	
-							}
+                            System.out.println(resolver);
+                            ByteBuffer tmpBuffer = resolver.readInto();
+                            if(tmpBuffer.hasRemaining())
+                                channel.write(tmpBuffer);
 						}
 					}
 				}
