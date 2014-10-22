@@ -115,22 +115,32 @@ public class DynamicCrawler {
 //        System.out.println(elements.get(0).text());
 //        System.out.println(System.currentTimeMillis()-starttime);
 
-        String baseUrl = "http://zhidao.baidu.com/daily";
-        String html = Jsoup.connect("http://zhidao.baidu.com/daily").post().body().html();
-        long starttime = System.currentTimeMillis();
-//        html = Jsoup.clean(html,"http://www.gamersky.com/Special/hot/",Whitelist.basic().addAttributes("td","class"));
-
-        Document document = Jsoup.parse(html);
-        Elements elements = document.select("h2 a");
-
-        Element element = elements.get(0);
-        String txtUrl = StringUtils.startsWithIgnoreCase(element.attr("href"), baseUrl) ? StringUtils.EMPTY : baseUrl.concat(element.attr("href"));
-        System.out.println(txtUrl);
-        System.out.println(element.text());
-        System.out.println(Jsoup.parse(Jsoup.connect(txtUrl).post().body().html()).select(".d-detail-txt p:not([class])").html());
-
-        System.out.println(System.currentTimeMillis() - starttime);
-
+        printByJsoup("http://zhidao.baidu.com/daily","h2 a");
+        printByJsoup("http://www.gamersky.com/Special/hot/",".dlist~td a");
+        printByJsoup("http://www.appinn.com/","h2.entry-title a");
 
     }
+
+    public static void printByJsoup(String url,String exp){
+        String html;
+        try {
+            html = Jsoup.connect(url).post().body().html();
+            long starttime = System.currentTimeMillis();
+
+            Document document = Jsoup.parse(html);
+            Elements elements = document.select(exp);
+            for (Element element : elements) {
+                String href = element.attr("href");
+                String txtUrl = StringUtils.startsWithIgnoreCase(href, "http://") ? href : url.concat(href);
+                System.out.println(txtUrl+":::"+element.text());
+            }
+
+            System.out.println("costs::"+(System.currentTimeMillis() - starttime));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
 }
