@@ -1,10 +1,7 @@
 package pac.testcase.http;
 
 import org.apache.commons.httpclient.HostConfiguration;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.params.HostParams;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -72,16 +69,20 @@ public class HtmlCrawler {
      * @throws SAXException
      * @throws XPathExpressionException
      */
-    static void crawlByXPath() throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
+    static void crawlByXPath(String url) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
+
+        String html = Jsoup.connect(url).post().html();
+        System.out.println(html);
+
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
-        Document document = builder.parse("http://stackoverflow.com/questions/12585253/how-to-remove-unused-imports-in-intellij-idea-on-commit");
+        Document document = builder.parse(html);
 
         XPathFactory xPathFactory = XPathFactory.newInstance();
         XPath xPath = xPathFactory.newXPath();
 
-        //<div class="post-text" itemprop="text"><p>When you commit, tick the <code>Optimize imports</code> option on the right.  This will become the default until you change it.</p><p>I prefer using the <code>Reformat code</code> option as well.</p></div>
         XPathExpression expression = xPath.compile("//div[class=post-text]/text()");
+        expression.evaluate(html);
 
     }
 
@@ -143,4 +144,7 @@ public class HtmlCrawler {
         }
     }
 
+    public static void main(String[] args) throws ParserConfigurationException, SAXException, XPathExpressionException, IOException {
+
+    }
 }
