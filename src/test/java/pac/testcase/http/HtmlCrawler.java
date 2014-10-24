@@ -6,22 +6,23 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.htmlcleaner.*;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
 import org.junit.Test;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
+import javax.xml.xpath.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -129,7 +130,7 @@ public class HtmlCrawler {
     }
 
     @Test
-    public void crawlByHttpClientOfCommons(){
+    public void crawlByHttpClientOfCommons() {
         org.apache.commons.httpclient.HttpClient client = new org.apache.commons.httpclient.HttpClient();
         HostConfiguration configuration = new HostConfiguration();
 
@@ -144,7 +145,30 @@ public class HtmlCrawler {
         }
     }
 
-    public static void main(String[] args) throws ParserConfigurationException, SAXException, XPathExpressionException, IOException {
+    public static void main(String[] args) throws IOException, XPatherException, ParserConfigurationException, XPathExpressionException {
+        String url = "http://zhidao.baidu.com/daily";
+        String exp = "//h2/a[contains(@href,'daily')]/@href";
 
+        String html = null;
+        try {
+            Connection connect = Jsoup.connect(url);
+            html = connect.get().body().html();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        HtmlCleaner hc = new HtmlCleaner();
+        TagNode tn = hc.clean(html);
+        Document dom = new DomSerializer(new CleanerProperties()).createDOM(tn);
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        Object result;
+        result = xPath.evaluate(exp, dom, XPathConstants.NODESET);
+        if (result instanceof NodeList) {
+            NodeList nodeList = (NodeList) result;
+            System.out.println(nodeList.getLength());
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node node = nodeList.item(i);
+                System.out.println(node.getNodeValue() == null ? node.getTextContent() : node.getNodeValue());
+            }
+        }
     }
 }
