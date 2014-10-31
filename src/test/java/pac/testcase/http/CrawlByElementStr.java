@@ -1,9 +1,6 @@
 package pac.testcase.http;
 
-import com.alibaba.fastjson.JSONArray;
 import org.apache.commons.lang3.StringUtils;
-import org.htmlcleaner.HtmlCleaner;
-import org.htmlcleaner.TagNode;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -13,17 +10,100 @@ import org.junit.Test;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.Map;
 
 /**
  * Created by Alvez on 14-10-27.
  */
 public class CrawlByElementStr {
+
+
+    public void previewContent(String url,String articleFrom, List<String> ignoreStr) {
+        if(StringUtils.isBlank(url))return ;
+
+        Document document;
+        try {
+            document = getWithHeader(url);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ;
+        }
+
+        Elements elements = document.select(getCssQueryStr(articleFrom));
+        Element articleFromElement = null;
+        if(elements!=null && elements.size()>0) {
+            articleFromElement = elements.get(0);
+        }
+        if(articleFromElement==null)return  ;
+        Elements ignores = new Elements();
+        if(ignoreStr !=null)
+            for (String ignore : ignoreStr) {
+                String queryStr = getCssQueryStr(ignore);
+                if(StringUtils.isNotBlank(queryStr))
+                    ignores.addAll(document.select(queryStr));
+            }
+
+        StringBuilder articleHtml = new StringBuilder();
+        if(ignores.size()==0){
+            for (Element element1 : articleFromElement.children())
+                articleHtml.append(element1);
+        }else{
+            for (Element ignore : ignores) {
+                if(ignore.parentNode()!=null)
+                    ignore.remove();
+            }
+            for (Element child : articleFromElement.children()) {
+                articleHtml.append(child);
+            }
+        }
+
+        System.out.println(articleHtml);
+    }
+
+    public void previewList(String url, List<String> ignoreLinkElementStrs) {
+
+        if(StringUtils.isBlank(url))return ;
+
+        url = "http://".concat(url);
+        String baseUrl = url.substring(0,url.indexOf("/",8));
+        Document document;
+        try {
+            document = getWithHeader(url);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ;
+        }
+
+        Elements relativeLinks = document.select("a[href^=/]");
+        for (Element relativeLink : relativeLinks) {
+            relativeLink.attr("href",baseUrl.concat(relativeLink.attr("href")));
+        }
+        Elements regularLinks = document.select("a[href^='" + baseUrl + "']");
+        regularLinks.addAll(relativeLinks);
+
+        Iterator<Element> regularLinkItr = regularLinks.iterator();
+        if(ignoreLinkElementStrs !=null)
+            while(regularLinkItr.hasNext()){
+                String regularLink = regularLinkItr.next().toString();
+                for (String ignoreLink : ignoreLinkElementStrs) {
+                    if(regularLink.contains(ignoreLink)){
+                        regularLinkItr.remove();break;
+                    }
+                }
+            }
+
+        regularLinkItr = regularLinks.iterator();
+
+        regularLinkItr = regularLinks.iterator();
+        while(regularLinkItr.hasNext()){
+            Element link =regularLinkItr.next();
+            System.out.println(link.text().concat("==").concat(link.attr("href")));
+        }
+
+    }
+
 
     @Test
     public void main() throws IOException, ParserConfigurationException {
