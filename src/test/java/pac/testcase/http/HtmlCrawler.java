@@ -147,15 +147,22 @@ public class HtmlCrawler {
 
     public static void main(String[] args) throws IOException, XPatherException, ParserConfigurationException, XPathExpressionException {
         String url = "http://zhidao.baidu.com/daily";
+        url = "http://www.gamersky.com/Special/hot/";
         String exp = "//h2/a[contains(@href,'daily')]/@href";
 
         String html = null;
         try {
             Connection connect = Jsoup.connect(url);
-            html = connect.get().body().html();
+            html = connect.header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8")
+                    .header("Accept-Encoding","gzip,deflate,sdch")
+                    .header("Accept-Language","zh-CN,zh;q=0.8,en;q=0.6,ja;q=0.4,ko;q=0.2,zh-TW;q=0.2")
+                    .header("User-Agent", "Mozilla/5.0 (Windows NT 5.2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.104 Safari/537.36")
+                    .get().body().html();
         } catch (IOException e) {
             e.printStackTrace();
         }
+       /* long start = System.currentTimeMillis();
+        System.out.println(start);
         HtmlCleaner hc = new HtmlCleaner();
         TagNode tn = hc.clean(html);
         Document dom = new DomSerializer(new CleanerProperties()).createDOM(tn);
@@ -169,6 +176,28 @@ public class HtmlCrawler {
                 Node node = nodeList.item(i);
                 System.out.println(node.getNodeValue() == null ? node.getTextContent() : node.getNodeValue());
             }
+        }*/
+///daily/view?id=
+        //<h2><a href="/daily/view\?id=?(\d{4})
+        //<p style="text-align:center">([\s|.|\w|<|>|=|"|:|/|u4e00-u9fa5]*)
+        //^s*|s*$
+        //d-detail-txt
+        //<div class="d-detail-txt">([\s|\w|<|>|.]+)
+        //<div class="d-detail-txt">[\s,.,<,>,u4e00-u9fa5]*
+        //u4e00-u9fa5
+        //<table>([\s\w<>/[^u4e00-u9fa5]]*)</table>
+        //"(\\s*<p>[\\s\\w<>/\"=:;?[^u4e00-u9fa5]]*?</p>)"
+        //<div class="d-detail-txt">\s*<p>[\s\w<>/"=:;?[^u4e00-u9fa5]]*?</div>
+        System.out.println("request succeed");
+        System.out.println(html);
+        String regex = "class=\"dlist\">&middot;</td>\\s*<td><a\\s*href=\"(.*?)\"";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(html);
+        int count = 0;
+        while(matcher.find()){
+            count++;
+            System.out.println("matched:::"+matcher.group(1));
         }
+        System.out.println("count::"+count);
     }
 }
