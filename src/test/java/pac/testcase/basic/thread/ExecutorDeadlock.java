@@ -19,7 +19,7 @@ public class ExecutorDeadlock {
 			@Override
 			public void run() {
 				synchronized (set) {
-					for (Integer i : set) {
+					for (int i : set) {
 						if(i==23){
 							
 							//needless background thread leads to deadlock

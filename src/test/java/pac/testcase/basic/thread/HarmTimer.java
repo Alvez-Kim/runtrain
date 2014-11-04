@@ -24,25 +24,25 @@ public class HarmTimer {
                 }
             }
         };
-        timer.schedule(task,1000);
-        Thread.currentThread().sleep(1000l);
+        timer.schedule(task,1);
+        Thread.sleep(1l);
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 System.out.println("task 2");
             }
-        },1000);
+        },1);
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 System.out.println("task 3");
             }
-        },1000);
+        },1);
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 System.out.println("task 4");
             }
-        },1000);
+        },1);
     }
 }

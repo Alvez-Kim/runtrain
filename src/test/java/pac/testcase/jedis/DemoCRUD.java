@@ -84,7 +84,8 @@ public class DemoCRUD {
 	public static void main(String[] args) {
 		Jedis jedis = new 
 				Jedis("localhost",6379);
-		jedis.del("host");
+
+        System.out.println(jedis.get("host"));
 		for (int i = 0; i < 100; i++) {
 			jedis.del("Jinkey"+i);
 		}

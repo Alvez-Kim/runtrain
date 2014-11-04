@@ -1,5 +1,8 @@
 package pac.testcase.utils;
 
+import android.graphics.*;
+import com.sun.imageio.plugins.common.ImageUtil;
+
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -8,7 +11,11 @@ import java.awt.RenderingHints;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.*;
+import java.nio.file.Path;
 
 import javax.imageio.ImageIO;
 
@@ -63,13 +70,42 @@ public class ImgUtils {
         return scaledBI;
     }
 
+    public static Bitmap getRoundCornerBitmap(Bitmap bitmap, float roundPX){
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+
+        Bitmap bitmap2 = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap2);
+
+        final int color = 0xff424242;
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, width, height);
+        final RectF rectF = new RectF(rect);
+
+        paint.setColor(color);
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        canvas.drawRoundRect(rectF, roundPX, roundPX, paint);
+
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+
+        return bitmap2;
+    }
+
     public static void main(String[] args) throws IOException {
 //        BufferedImage icon = ImageIO.read(new File("D:/Wallpaper/p1358080806.jpg"));
 //        BufferedImage rounded = makeRoundedCorner(icon, 60);
 //        ImageIO.write(rounded, "png", new File("D:/Wallpaper/gen.png"));
 
-        BufferedImage pic = ImageIO.read(new File("D:/Wallpaper/000.jpg"));
-        BufferedImage resized = createResizedCopy(makeRoundedCorner(pic,70), 72, 72, true);
-        ImageIO.write(resized, "jpg", new File("D:/Wallpaper/gen.png"));
+        Files.copy(new File("D:/Wallpaper/000.jpg").toPath(),new File("D:/Wallpaper/111.png").toPath());
+        BufferedImage pic = ImageIO.read(new File("D:/Wallpaper/111.png"));
+
+        BufferedImage resized = makeRoundedCorner(createResizedCopy(pic, 520, 520, true), 70);
+        ImageIO.write(resized, "png", new File("D:/Wallpaper/gen.png"));
+
+//        BitmapFactory.decodeStream(new FileInputStream("D:/Wallpaper/p1358080806.jpg"));
+//        Bitmap bitmap = getRoundCornerBitmap(BitmapFactory.decodeStream(new FileInputStream("D:/Wallpaper/p1358080806.jpg")),30);
+
     }
 }

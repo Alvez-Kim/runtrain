@@ -9,6 +9,7 @@ import org.jsoup.select.Elements;
 import org.junit.Test;
 
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
