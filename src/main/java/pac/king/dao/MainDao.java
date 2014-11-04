@@ -25,3 +25,4 @@ public interface MainDao {
 	@Insert("INSERT INTO USER VALUES(UUID(),#{user.name},#{user.password})")
 	int insertUserInfo(@Param("user")User user);
 }
+

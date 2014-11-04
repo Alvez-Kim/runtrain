@@ -1,5 +1,6 @@
 package pac.king.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -29,7 +30,6 @@ import pac.king.service.MainService;
 
 @Controller
 @RequestMapping("/main")
-@SessionAttributes("currentUser")
 public class MainController {
 
 	@Autowired
@@ -40,9 +40,9 @@ public class MainController {
 	ServletContext servletContext;
 
 	@RequestMapping(value = "/index")
-	@SessionScope("currentUser")
+	//@SessionScope("currentUser")
 	public ModelAndView index(User currentUser) {
-		ModelAndView mav;
+        ModelAndView mav;
 		if (currentUser==null || currentUser.getId()==null)
 			mav = new ModelAndView("/login");
 		else {
@@ -60,7 +60,8 @@ public class MainController {
 		u[0] = new User("0001","King","t;stmdtkg");
 		u[1] = new User("0001","King","t;stmdtkg");
 		u[2] = new User("0001","King","t;stmdtkg");
-		u[3] = new User("0001","King","t;stmdtkg");
+		u[3] = new User("0001",null,"");
+
 		return u; 
 	}
 	
@@ -114,6 +115,7 @@ public class MainController {
 	@RequestMapping(value = "/regist")
 	public String regist(User user) {
 		mainService.userRegist(user);
+
 		return "/regist";
 	}
 	
