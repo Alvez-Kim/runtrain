@@ -5,7 +5,7 @@
 	<artifactId>runtrain</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
-	<properties>
+    <properties>
 		<jdk.version>1.7</jdk.version>
 		<spring.version>4.0.3.RELEASE</spring.version>
 		<slf4j.version>1.7.5</slf4j.version>
@@ -75,6 +75,11 @@
 			<version>3.0.1</version>
 			<scope>provided</scope>
 		</dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>1.2</version>
+        </dependency>
 
 		<!-- spring basic -->
 		<dependency>
@@ -140,21 +145,21 @@
 			<artifactId>commons-lang3</artifactId>
 			<version>${commons-lang3.version}</version>
 		</dependency>
-		<!-- <dependency> -->
-		<!-- <groupId>org.apache.commons</groupId> -->
-		<!-- <artifactId> -->
-		<!-- com.springsource.org.apache.commons.httpclient -->
-		<!-- </artifactId> -->
-		<!-- <version>3.1.0</version> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>org.apache.commons</groupId> -->
-		<!-- <artifactId> -->
-		<!-- com.springsource.org.apache.commons.logging -->
-		<!-- </artifactId> -->
-		<!-- <version>1.1.1</version> -->
-		<!-- </dependency> -->
-		<dependency>
+		 <dependency>
+             <groupId>org.apache.commons</groupId>
+             <artifactId>
+                 com.springsource.org.apache.commons.httpclient
+             </artifactId>
+             <version>3.1.0</version>
+         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>
+                com.springsource.org.apache.commons.logging
+            </artifactId>
+            <version>1.1.1</version>
+        </dependency>
+        <dependency>
 			<groupId>commons-beanutils</groupId>
 			<artifactId>commons-beanutils</artifactId>
 			<version>1.8.3</version>
@@ -171,7 +176,29 @@
 			<version>1.50.0</version>
 		</dependency>
 
-		<!-- shiro -->
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.7.3</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sourceforge.htmlcleaner</groupId>
+            <artifactId>htmlcleaner</artifactId>
+            <version>2.9</version>
+        </dependency>
+        <dependency>
+            <groupId>us.codecraft</groupId>
+            <artifactId>webmagic-core</artifactId>
+            <version>0.5.2</version>
+        </dependency>
+        <dependency>
+            <groupId>us.codecraft</groupId>
+            <artifactId>webmagic-extension</artifactId>
+            <version>0.5.2</version>
+        </dependency>
+
+
+        <!-- shiro -->
 		<dependency>
 			<groupId>org.apache.shiro</groupId>
 			<artifactId>shiro-core</artifactId>
@@ -296,17 +323,17 @@
 			<version>${lucene.version}</version>
 		</dependency>
 
-		<!-- quartz scheduler -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.quartz-scheduler</groupId> -->
-<!-- 			<artifactId>quartz</artifactId> -->
-<!-- 			<version>2.2.1</version> -->
-<!-- 		</dependency> -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.quartz-scheduler</groupId> -->
-<!-- 			<artifactId>quartz-jobs</artifactId> -->
-<!-- 			<version>2.2.1</version> -->
-<!-- 		</dependency> -->
+		 <!--quartz scheduler-->
+ 		<dependency>
+ 			<groupId>org.quartz-scheduler</groupId>
+ 			<artifactId>quartz</artifactId>
+ 			<version>2.2.1</version>
+ 		</dependency>
+ 		<dependency>
+ 			<groupId>org.quartz-scheduler</groupId>
+ 			<artifactId>quartz-jobs</artifactId>
+ 			<version>2.2.1</version>
+ 		</dependency>
 
 		<!-- jms activemq -->
 		<dependency>
@@ -492,11 +519,11 @@
 <!-- 			<artifactId>pinyin4j</artifactId> -->
 <!-- 			<version>2.5.0</version> -->
 <!-- 		</dependency> -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.apache.commons</groupId> -->
-<!-- 			<artifactId>commons-compress</artifactId> -->
-<!-- 			<version>1.8.1</version> -->
-<!-- 		</dependency> -->
+ 		<dependency>
+ 			<groupId>org.apache.commons</groupId>
+ 			<artifactId>commons-compress</artifactId>
+ 			<version>1.8.1</version>
+ 		</dependency>
 
 		<dependency>
 			<groupId>com.rabbitmq</groupId>
@@ -508,7 +535,20 @@
 			<artifactId>pinyin4j</artifactId>
 			<version>2.5.0</version>
 		</dependency>
-	</dependencies>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>14.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.android</groupId>
+            <artifactId>android</artifactId>
+            <version>4.1.1.4</version>
+        </dependency>
+
+    </dependencies>
 	<build>
 		<plugins>
 			<plugin>
@@ -541,16 +581,16 @@
 					<packagingExcludes>WEB-INF/web.xml</packagingExcludes>
 				</configuration>
 			</plugin>
-<!-- 			<plugin> -->
-<!-- 				<groupId>org.apache.tomcat.maven</groupId> -->
-<!-- 				<artifactId>tomcat7-maven-plugin</artifactId> -->
-<!-- 				<version>2.0</version> -->
-<!-- 				<configuration> -->
-<!-- 					<url>http://localhost:8080/runtrain</url> -->
-<!-- 				</configuration> -->
-<!-- 			</plugin> -->
+ 			<plugin>
+ 				<groupId>org.apache.tomcat.maven</groupId>
+ 				<artifactId>tomcat7-maven-plugin</artifactId>
+ 				<version>2.0</version>
+ 				<configuration>
+ 					<url>http://localhost:8080/runtrain</url>
+ 				</configuration>
+ 			</plugin>
 
 		</plugins>
 	</build>
-	<packaging>war</packaging>
+	<packaging>pom</packaging>
 </project>

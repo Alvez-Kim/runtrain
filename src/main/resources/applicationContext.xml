@@ -15,9 +15,9 @@
 		ignore-unresolvable="true" local-override="true"
 		location="classpath*:/application.properties,classpath*:/application.local.properties" />
  -->
-<!-- 	<util:properties id="APP_PROPERTIES" location="classpath:application.properties" local-override="true" /> -->
+ 	<util:properties id="APP_PROPERTIES" location="classpath:application.properties" local-override="true" />
 
-	<context:component-scan base-package="pac.king" use-default-filters="true" />
+	<context:component-scan base-package="pac.king.*" use-default-filters="true" />
 	<!--
 	<bean id="myHessianServiceImpl" class="pac.king.common.rpc.impl.MyHessianServiceImpl" />
 	 <bean id="myHessianService" class="org.springframework.remoting.caucho.HessianServiceExporter"
