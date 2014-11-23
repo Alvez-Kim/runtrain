@@ -9,6 +9,7 @@ import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
 import net.sourceforge.pinyin4j.format.HanyuPinyinVCharType;
 import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
 import org.apache.commons.lang.StringUtils;
+import org.junit.Test;
 
 public class HanSpellHelper {
 	public static String getEname(String name)
@@ -51,11 +52,6 @@ public class HanSpellHelper {
         return (str.substring(0, 1)).toUpperCase() + str.substring(1, str.length());
 	}
 
-    /**
-     * 汉字转换位汉语拼音首字母，英文字符不变
-     * @param chines 汉字
-     * @return 拼音
-     */
     public static String converterToFirstSpell(String chines){
         String pinyinName = "";
         char[] nameChar = chines.toCharArray();
@@ -77,11 +73,6 @@ public class HanSpellHelper {
         return pinyinName;
     }
 
-    /**
-     * 汉字转换位汉语拼音，英文字符不变
-     * @param chines 汉字
-     * @return 拼音
-     */
     public static String converterToSpell(String chines){
         String pinyinName = "";
         char[] nameChar = chines.toCharArray();
@@ -105,15 +96,14 @@ public class HanSpellHelper {
         return pinyinName;
     }
 
-    public static void main(String[] args)
-			throws BadHanyuPinyinOutputFormatCombination {
-		System.out.println(Arrays.toString(PinyinHelper
-				.toGwoyeuRomatzyhStringArray('金')));
-		
-		System.out.println(getUpEname("金大侠"));
-        System.out.println(Arrays.toString(PinyinHelper.toGwoyeuRomatzyhStringArray('김')));
+
+    @Test
+    public void testHanSpell() throws BadHanyuPinyinOutputFormatCombination {
+
+        String upEname = getUpEname("金大侠");
+        String[] koreanChars = PinyinHelper.toGwoyeuRomatzyhStringArray('김');
+        assert koreanChars==null;
 
         System.out.println(converterToSpell("김大侠"));
-
-	}
+    }
 }
