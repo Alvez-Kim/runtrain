@@ -8,6 +8,7 @@ import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
 import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
 import net.sourceforge.pinyin4j.format.HanyuPinyinVCharType;
 import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
+import org.apache.commons.lang.StringUtils;
 
 public class HanSpellHelper {
 	public static String getEname(String name)
@@ -28,7 +29,7 @@ public class HanSpellHelper {
 	public static String getUpEname(String name)
 			throws BadHanyuPinyinOutputFormatCombination {
 		char[] strs = name.toCharArray();
-		String newname = null;
+		String newname;
 
 		if (strs.length == 2) {
 			newname = toUpCase(getEname("" + strs[0])) + " "
@@ -47,18 +48,72 @@ public class HanSpellHelper {
 	}
 
 	private static String toUpCase(String str) {
-		StringBuffer newstr = new StringBuffer();
-		newstr.append((str.substring(0, 1)).toUpperCase()).append(
-				str.substring(1, str.length()));
-
-		return newstr.toString();
+        return (str.substring(0, 1)).toUpperCase() + str.substring(1, str.length());
 	}
 
-	public static void main(String[] args)
+    /**
+     * 汉字转换位汉语拼音首字母，英文字符不变
+     * @param chines 汉字
+     * @return 拼音
+     */
+    public static String converterToFirstSpell(String chines){
+        String pinyinName = "";
+        char[] nameChar = chines.toCharArray();
+        HanyuPinyinOutputFormat defaultFormat = new HanyuPinyinOutputFormat();
+        defaultFormat.setCaseType(HanyuPinyinCaseType.LOWERCASE);
+        defaultFormat.setToneType(HanyuPinyinToneType.WITHOUT_TONE);
+        for (char aNameChar : nameChar) {
+            if (aNameChar > 128) {
+                try {
+                    System.out.println("+++" + aNameChar);
+                    pinyinName += PinyinHelper.toHanyuPinyinStringArray(aNameChar, defaultFormat)[0].charAt(0);
+                } catch (BadHanyuPinyinOutputFormatCombination e) {
+                    e.printStackTrace();
+                }
+            } else {
+                pinyinName += aNameChar;
+            }
+        }
+        return pinyinName;
+    }
+
+    /**
+     * 汉字转换位汉语拼音，英文字符不变
+     * @param chines 汉字
+     * @return 拼音
+     */
+    public static String converterToSpell(String chines){
+        String pinyinName = "";
+        char[] nameChar = chines.toCharArray();
+        HanyuPinyinOutputFormat defaultFormat = new HanyuPinyinOutputFormat();
+        defaultFormat.setCaseType(HanyuPinyinCaseType.LOWERCASE);
+        defaultFormat.setToneType(HanyuPinyinToneType.WITHOUT_TONE);
+        for (char aNameChar : nameChar) {
+            if (aNameChar > 128) {
+                try {
+                    String[] strings = PinyinHelper.toHanyuPinyinStringArray(aNameChar, defaultFormat);
+
+                    //due to each method of PinyinHelper returns null , i hove to check
+                    pinyinName += strings == null ? StringUtils.EMPTY : strings[0];
+                } catch (BadHanyuPinyinOutputFormatCombination e) {
+                    e.printStackTrace();
+                }
+            } else {
+                pinyinName += aNameChar;
+            }
+        }
+        return pinyinName;
+    }
+
+    public static void main(String[] args)
 			throws BadHanyuPinyinOutputFormatCombination {
 		System.out.println(Arrays.toString(PinyinHelper
 				.toGwoyeuRomatzyhStringArray('金')));
 		
 		System.out.println(getUpEname("金大侠"));
+        System.out.println(Arrays.toString(PinyinHelper.toGwoyeuRomatzyhStringArray('김')));
+
+        System.out.println(converterToSpell("김大侠"));
+
 	}
 }
