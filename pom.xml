@@ -55,20 +55,6 @@
 		<!-- Jackson JSON Mapper -->
 		<!-- SpringMVC的@ResponseBody需要使用 -->
 
-		<!-- servlet-api -->
-		<!-- <dependency> -->
-		<!-- <groupId>org.apache.tomcat</groupId> -->
-		<!-- <artifactId>servlet-api</artifactId> -->
-		<!-- <version>6.0.37</version> -->
-		<!-- <scope>provided</scope> -->
-		<!-- <optional>false</optional> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>org.apache.tomcat</groupId> -->
-		<!-- <artifactId>jsp-api</artifactId> -->
-		<!-- <version>6.0.37</version> -->
-		<!-- <scope>provided</scope> -->
-		<!-- </dependency> -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
@@ -514,11 +500,7 @@
 <!-- 			<artifactId>xmlworker</artifactId> -->
 <!-- 			<version>5.5.1</version> -->
 <!-- 		</dependency> -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>com.belerweb</groupId> -->
-<!-- 			<artifactId>pinyin4j</artifactId> -->
-<!-- 			<version>2.5.0</version> -->
-<!-- 		</dependency> -->
+
  		<dependency>
  			<groupId>org.apache.commons</groupId>
  			<artifactId>commons-compress</artifactId>
