@@ -9,9 +9,10 @@ import org.jsoup.select.Elements;
 import org.junit.Test;
 
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,24 +22,27 @@ import java.util.regex.Pattern;
 public class CrawlByElementStr {
 
 
-    public void previewContent(String url,String articleFrom, List<String> ignoreStr) {
-        if(StringUtils.isBlank(url))return ;
+
+    public String previewContent(String url,String articleFrom, List<String> ignoreStr) {
+        if(StringUtils.isBlank(url))return StringUtils.EMPTY;
 
         Document document;
         try {
             document = getWithHeader(url);
         } catch (IOException e) {
             e.printStackTrace();
-            return ;
+            return StringUtils.EMPTY ;
         }
 
         Elements elements = document.select(getCssQueryStr(articleFrom));
+
         Element articleFromElement = null;
         if(elements!=null && elements.size()>0) {
             articleFromElement = elements.get(0);
         }
-        if(articleFromElement==null)return  ;
+        if(articleFromElement==null)return StringUtils.EMPTY;
         Elements ignores = new Elements();
+        ignores.addAll(document.select("script"));
         if(ignoreStr !=null)
             for (String ignore : ignoreStr) {
                 String queryStr = getCssQueryStr(ignore);
@@ -56,11 +60,16 @@ public class CrawlByElementStr {
                     ignore.remove();
             }
             for (Element child : articleFromElement.children()) {
+                //remove a tags
+                for (Element a : child.select("a")) {
+                    child.append(a.html());
+                    a.remove();
+                }
                 articleHtml.append(child);
             }
         }
 
-        System.out.println(articleHtml);
+        return String.valueOf(articleHtml);
     }
 
     public void previewList(String url, List<String> ignoreLinkElementStrs) {
@@ -96,57 +105,10 @@ public class CrawlByElementStr {
             }
 
         regularLinkItr = regularLinks.iterator();
-
-        regularLinkItr = regularLinks.iterator();
         while(regularLinkItr.hasNext()){
             Element link =regularLinkItr.next();
-            System.out.println(link.text().concat("==").concat(link.attr("href")));
         }
 
-    }
-
-
-    @Test
-    public void main() throws IOException, ParserConfigurationException {
-        String url = "http://zhidao.baidu.com/daily/view?id=2992";
-        String baseUrl = url.substring(0, url.indexOf("/", 8) + 1);
-        Document document = getWithHeader(url);
-        Element body = document.body();
-        //<ul class="d-list" id="dailyList">
-
-        //<div class="d-detail-txt">
-        String nodeStr = "<div class=\"d-detail-txt\">";
-        Elements elements = document.select(getCssQueryStr(nodeStr));
-        Element element = null;
-        if (elements != null && elements.size() > 0)
-            element = elements.get(0);
-        nodeStr = "class=\"hidden-mobile\"";
-        System.out.println(getCssQueryStr(nodeStr));
-        StringBuilder articleHtml = new StringBuilder();
-        Elements ignores = document.select(getCssQueryStr(nodeStr));
-        ignores.addAll(document.select(getCssQueryStr("<ul class=\"other-qts hidden-mobile\">")));
-        int ignoreIndex = 0;
-        for (Element element1 : element.children()) {
-            if (!element1.equals(ignores.get(ignoreIndex))) {
-                articleHtml.append(element1);
-            } else {
-                if (ignoreIndex < ignores.size() - 1) ignoreIndex++;
-            }
-        }
-
-        System.out.println(getCssQueryStr("class=\"grid\" target=\"_blank\""));
-    }
-
-    static Map<String, String> getAttrs(String nodeStr) {
-        Map<String, String> attrs = new HashMap<>();
-        Matcher matcher = Pattern.compile("([\\w-]+\\s*=[\"']*[\\w\\s-]+[\"']*)\\s*").matcher(nodeStr);
-        while (matcher.find()) {
-            String attrStr = matcher.group(1);
-            attrStr = StringUtils.replaceChars(attrStr, "\"'", "");
-            int eqIndex = attrStr.indexOf("=");
-            attrs.put(attrStr.substring(0, eqIndex), attrStr.substring(eqIndex + 1, attrStr.length()));
-        }
-        return attrs;
     }
 
     private String getTagNameStr(String nodeStr){
@@ -155,26 +117,38 @@ public class CrawlByElementStr {
         return matcher.find()?matcher.group(1): StringUtils.EMPTY;
     }
 
-    private String getCssQueryStr(String nodeStr){
+    /**
+     * convert html elements str to css query string
+     * @param nodeStr could be html tag string or attributes string
+     * @return css query string for Jsoup select method param
+     */
+    private String getCssQueryStr(String nodeStr) {
         String cssQueryStr = StringUtils.EMPTY;
-        if(StringUtils.indexOfAny(nodeStr,'<','>','=')==-1){
+        if (StringUtils.indexOfAny(nodeStr, '<', '>', '=') == -1) {
             Matcher matcher = Pattern.compile("\\s*([\\.\\w-]+)").matcher(nodeStr);
-            while(matcher.find())
-                cssQueryStr+="[".concat(matcher.group(1)).concat("]");
-        }else{
+            while (matcher.find())
+                cssQueryStr += "[".concat(matcher.group(1)).concat("]");
+        } else {
             cssQueryStr = getTagNameStr(nodeStr);
-            Matcher matcher = Pattern.compile("([\\w-]+\\s*=[\"']*[/\\.\\w\\s:-]*[\"']*)\\s*").matcher(nodeStr);
-            while(matcher.find()){
+            Matcher matcher = Pattern.compile("([\\w-]+\\s*=[\"']?[/\\.\\w\\s:-]*[\"']?)\\s*").matcher(nodeStr);
+            while (matcher.find()) {
                 String attrStr = matcher.group(1);
-                if(attrStr.contains("javascript"))continue;
-                attrStr = "[".concat(StringUtils.replaceChars(attrStr,"\"'","")).concat("]");
-                cssQueryStr+=attrStr;
+                if (attrStr.contains("javascript")) continue;
+                attrStr = "[".concat(StringUtils.replaceChars(attrStr, "\"'", "")).concat("]");
+                cssQueryStr += attrStr;
             }
+            cssQueryStr = StringUtils.replace(cssQueryStr,"=]","]");
         }
         return cssQueryStr;
     }
 
-    private Document getWithHeader(String url) throws IOException {
+    /**
+     * send get request with simulated http header
+     * @param url general url starts with http
+     * @return Jsoup Document obj
+     * @throws IOException
+     */
+    private static Document getWithHeader(String url) throws IOException {
         Connection connection = Jsoup.connect(url);
         return connection.header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8")
                 .header("Accept-Encoding", "gzip,deflate,sdch")
@@ -182,4 +156,13 @@ public class CrawlByElementStr {
                 .header("User-Agent", "Mozilla/5.0 (Windows NT 5.2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.104 Safari/537.36")
                 .get();
     }
+
+    @Test
+    public void test() throws IOException, ParserConfigurationException {
+        String url = "http://zhidao.baidu.com/daily/view?id=3211";
+        List<String> ignores = new ArrayList<>();
+        String previewContent = previewContent(url, "<div class=\"d-detail-txt\">", ignores);
+        System.out.println(previewContent);
+    }
+
 }
