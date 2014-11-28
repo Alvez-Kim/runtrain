@@ -2,8 +2,8 @@ package pac.testcase.basic.thread;
 
 public class DeadLock  {
 	public static void main(String[] args) {
-		final Integer a = new Integer(1);
-		final Integer b = new Integer(1);
+		final Object a = new Object();
+		final Object b = new Object();
 		Thread t1 = new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -11,15 +11,13 @@ public class DeadLock  {
 					try {
 						System.out.println("t1a");
 						Thread.sleep(1);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
+					} catch (InterruptedException ignored) {
 					}
 					synchronized (b) {
 						System.out.println("t1b");
 					}
 				}
 			}
-
 		});
 		Thread t2 = new Thread(new Runnable() {
 			@Override
@@ -35,4 +33,5 @@ public class DeadLock  {
 		t1.start();
 		t2.start();
 	}
+
 }
